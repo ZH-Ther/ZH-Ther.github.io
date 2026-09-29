@@ -17,7 +17,7 @@ Personal research website for `https://zh-ther.github.io`, with a public academi
 1. Create a Supabase project and run `supabase/schema.sql`.
 2. Enable the GitHub provider in Supabase Authentication.
 3. Configure the OAuth callback URL in a GitHub OAuth App.
-4. Add `SUPABASE_URL` and `SUPABASE_ANON_KEY` as GitHub Actions repository variables.
+4. Add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` as GitHub Actions repository variables.
 5. Enable GitHub Pages with GitHub Actions as its source.
 
 The owner account is assigned automatically when the GitHub username is `ZH-Ther`.

@@ -1,9 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const config = window.ZH_THER_CONFIG || {};
-export const isConfigured = Boolean(config.supabaseUrl && config.supabaseAnonKey);
+const publishableKey = config.supabasePublishableKey || config.supabaseAnonKey;
+export const isConfigured = Boolean(config.supabaseUrl && publishableKey);
 export const supabase = isConfigured
-  ? createClient(config.supabaseUrl, config.supabaseAnonKey, {
+  ? createClient(config.supabaseUrl, publishableKey, {
       auth: { persistSession: true, detectSessionInUrl: true, flowType: "pkce" }
     })
   : null;

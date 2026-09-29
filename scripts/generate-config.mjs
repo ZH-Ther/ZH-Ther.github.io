@@ -2,7 +2,7 @@ import { writeFileSync } from "node:fs";
 
 const config = {
   supabaseUrl: process.env.SUPABASE_URL || "",
-  supabaseAnonKey: process.env.SUPABASE_ANON_KEY || "",
+  supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "",
   siteUrl: "https://zh-ther.github.io"
 };
 

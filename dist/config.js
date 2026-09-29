@@ -2,6 +2,6 @@
 // 本地预览时若保持为空，网站会使用内置示例内容。
 window.ZH_THER_CONFIG = {
   supabaseUrl: "",
-  supabaseAnonKey: "",
+  supabasePublishableKey: "",
   siteUrl: "https://zh-ther.github.io"
 };
