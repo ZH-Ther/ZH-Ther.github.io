@@ -68,6 +68,9 @@ button { color: inherit; }
 .nav a.active::before { height: 20px; }
 .socials { display: flex; gap: 12px; margin-top: 30px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
 .socials a:hover { color: var(--blue); }
+.admin-link { display: block; margin-top: 16px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--navy); font-size: 12px; text-align: center; transition: .2s ease; }
+.admin-link:hover { border-color: var(--blue); color: var(--blue); }
+.admin-link.setup-needed::after { content: " · 待连接"; color: var(--accent); }
 .theme-toggle { display: flex; gap: 9px; align-items: center; margin-top: 18px; padding: 0; border: 0; background: none; color: var(--muted); font-size: 13px; cursor: pointer; }
 .theme-icon { font-size: 18px; }
 .mobile-header { display: none; }
@@ -148,6 +151,7 @@ h2 { margin: 0; color: var(--navy); font-family: var(--serif); font-size: clamp(
 .note-card h3 { margin: 22px 0 10px; color: var(--navy); font-family: var(--serif); font-size: 24px; line-height: 1.35; }
 .note-card p { margin: 0; color: var(--muted); font-size: 14px; }
 .note-card footer { display: flex; justify-content: space-between; margin-top: auto; padding: 22px 0 0; border: 0; color: var(--teal); font-family: var(--mono); font-size: 11px; }
+.visibility-badge { margin-left: 8px; padding: 2px 6px; border-radius: 10px; background: var(--soft); color: var(--muted); font-size: 10px; }
 .empty-state { padding: 40px; border: 1px dashed var(--line); border-radius: 8px; text-align: center; color: var(--muted); }
 
 main > footer { max-width: 980px; display: flex; justify-content: space-between; align-items: flex-end; margin: 0 auto; padding: 42px 0 58px; color: var(--muted); font-size: 12px; }

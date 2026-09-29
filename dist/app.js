@@ -3,12 +3,12 @@
 // ─────────────────────────────────────────────────────────────
 const SITE_DATA = {
   profile: {
-    name: "林知远",
-    nameEn: "Zhiyuan Lin",
-    role: "博士研究生 · 人工智能与科学计算",
-    affiliation: "未来智能实验室 · 某某大学计算机学院",
+    name: "ZH-Ther",
+    nameEn: "Research Portfolio",
+    role: "科研工作者",
+    affiliation: "个人科研主页",
     email: "hello@example.edu",
-    bio: "你好，我是林知远。目前主要研究机器学习与科学计算的交叉问题，关注如何让智能模型在真实世界中更可靠、更透明，并真正服务于科学发现。"
+    bio: "你好，我是 ZH-Ther。这里用于整理个人研究方向、科研成果、项目经历与学习笔记；正式资料可在管理后台中持续更新。"
   },
   research: [
     { title: "可信机器学习", description: "研究模型不确定性、鲁棒性与可解释性，让智能系统的预测更可验证、更值得信任。", tags: ["Uncertainty", "Robustness", "XAI"] },
@@ -94,7 +94,7 @@ function renderNotes() {
   $('#noteGrid').innerHTML = rows.map((item) => `
     <article class="note-card" tabindex="0" role="button" data-note-id="${item.id}" aria-label="阅读：${item.title}">
       <time>${item.date}</time><h3>${item.title}</h3><p>${item.excerpt}</p>
-      <footer><span>${item.tag}</span><span>${item.minutes} 阅读</span></footer>
+      <footer><span>${item.tag}${item.visibility && item.visibility !== 'public' ? `<i class="visibility-badge">${item.visibility === 'members' ? '成员可见' : '私密'}</i>` : ''}</span><span>${item.minutes} 阅读</span></footer>
     </article>`).join('');
   $('#emptyState').hidden = rows.length > 0;
   $$('.filter-button', $('#noteTags')).forEach((button) => button.addEventListener('click', () => {
@@ -102,14 +102,14 @@ function renderNotes() {
     renderNotes();
   }));
   $$('.note-card').forEach((card) => {
-    const open = () => openNote(Number(card.dataset.noteId));
+    const open = () => openNote(card.dataset.noteId);
     card.addEventListener('click', open);
     card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } });
   });
 }
 
 function openNote(id) {
-  const note = SITE_DATA.notes.find((item) => item.id === id);
+  const note = SITE_DATA.notes.find((item) => String(item.id) === String(id));
   if (!note) return;
   $('#dialogContent').innerHTML = `
     <div class="dialog-meta">${note.date} · ${note.tag} · ${note.minutes}</div>
@@ -181,3 +181,13 @@ initTheme();
 initNavigation();
 initActions();
 $('#year').textContent = new Date().getFullYear();
+
+// 提供给 Supabase 数据层，在连接数据库后用真实内容覆盖示例内容。
+window.SITE_DATA = SITE_DATA;
+window.siteRender = {
+  profile: renderProfile,
+  research: renderResearch,
+  publications: renderPublications,
+  projects: renderProjects,
+  notes: renderNotes
+};

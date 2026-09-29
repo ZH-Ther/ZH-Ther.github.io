@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#102a43" />
+    <title>内容管理 · ZH-Ther Research</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&family=Source+Serif+4:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <header class="admin-topbar">
+      <a href="./index.html" class="admin-brand"><span>ZT</span><strong>ZH-Ther Research</strong></a>
+      <div class="account-area" id="accountArea"></div>
+    </header>
+
+    <main class="gate" id="setupGate" hidden>
+      <div class="gate-card">
+        <span class="gate-label">SETUP REQUIRED</span>
+        <h1>后台界面已经就绪</h1>
+        <p>连接 Supabase 后即可使用 GitHub 登录、内容编辑与隐私权限。当前公开主页仍会正常显示内置示例内容。</p>
+        <a href="./SETUP.html" class="button primary">查看启用步骤</a>
+      </div>
+    </main>
+
+    <main class="gate" id="loginGate" hidden>
+      <div class="gate-card">
+        <span class="gate-label">PRIVATE STUDIO</span>
+        <h1>登录内容管理后台</h1>
+        <p>使用 GitHub 身份登录。只有所有者和受邀编辑者可以修改网站内容。</p>
+        <button class="button primary" id="loginButton" type="button">使用 GitHub 登录</button>
+      </div>
+    </main>
+
+    <main class="gate" id="accessGate" hidden>
+      <div class="gate-card">
+        <span class="gate-label">ACCESS LIMITED</span>
+        <h1>当前账号暂无编辑权限</h1>
+        <p>如果你是受邀成员，请确认登录 GitHub 使用的邮箱与邀请邮箱一致。只读成员可返回主页阅读授权内容。</p>
+        <a href="./index.html" class="button primary">返回网站</a>
+      </div>
+    </main>
+
+    <div class="studio" id="studio" hidden>
+      <aside class="studio-nav">
+        <div>
+          <small>CONTENT STUDIO</small>
+          <h1>网站管理</h1>
+        </div>
+        <nav aria-label="管理后台导航">
+          <button class="nav-button active" data-panel="overview" type="button">概览</button>
+          <button class="nav-button" data-panel="profile" type="button">个人资料</button>
+          <button class="nav-button" data-panel="modules" type="button">科研模块</button>
+          <button class="nav-button" data-panel="posts" type="button">笔记博客</button>
+          <button class="nav-button owner-only" data-panel="team" type="button">成员权限</button>
+        </nav>
+        <a href="./index.html" class="back-link">查看公开主页</a>
+      </aside>
+
+      <section class="workspace">
+        <div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+        <section class="panel active" data-panel-id="overview">
+          <div class="panel-heading"><div><span>01</span><h2>概览</h2></div><p>快速查看网站内容与当前权限。</p></div>
+          <div class="stat-grid" id="statGrid"></div>
+          <div class="info-card"><h3>内容隐私规则</h3><p>“公开”内容对所有访客可见；“成员可见”要求受邀账号登录；“私密”仅所有者可读取；草稿只在后台出现。</p></div>
+        </section>
+
+        <section class="panel" data-panel-id="profile">
+          <div class="panel-heading"><div><span>02</span><h2>个人资料</h2></div><p>更新后会同步到公开主页。</p></div>
+          <form class="editor-form" id="profileForm">
+            <div class="field-grid two"><label>中文姓名<input name="name" required /></label><label>英文姓名<input name="name_en" /></label></div>
+            <div class="field-grid two"><label>学术身份<input name="role" /></label><label>单位 / 实验室<input name="affiliation" /></label></div>
+            <label>联系邮箱<input name="email" type="email" /></label>
+            <label>个人简介<textarea name="bio" rows="6"></textarea></label>
+            <div class="form-actions"><button class="button primary" type="submit">保存个人资料</button></div>
+          </form>
+        </section>
+
+        <section class="panel" data-panel-id="modules">
+          <div class="panel-heading"><div><span>03</span><h2>科研模块</h2></div><p>管理研究方向、论文成果和项目经历。</p></div>
+          <details class="module-editor" open>
+            <summary>研究方向 <button type="button" class="text-button" data-reset="researchForm">新建</button></summary>
+            <form class="editor-form compact" id="researchForm">
+              <input type="hidden" name="id" />
+              <div class="field-grid two"><label>标题<input name="title" required /></label><label>标签（逗号分隔）<input name="tags" /></label></div>
+              <label>说明<textarea name="description" rows="3"></textarea></label>
+              <label>可见范围<select name="visibility"><option value="public">公开</option><option value="members">成员可见</option><option value="private">仅所有者</option></select></label>
+              <button class="button primary" type="submit">保存研究方向</button>
+            </form>
+            <div class="record-list" id="researchList"></div>
+          </details>
+
+          <details class="module-editor">
+            <summary>论文成果 <button type="button" class="text-button" data-reset="publicationForm">新建</button></summary>
+            <form class="editor-form compact" id="publicationForm">
+              <input type="hidden" name="id" />
+              <div class="field-grid three"><label>年份<input name="year" type="number" required /></label><label>类型<input name="type" placeholder="会议 / 期刊" /></label><label>可见范围<select name="visibility"><option value="public">公开</option><option value="members">成员可见</option><option value="private">仅所有者</option></select></label></div>
+              <label>论文标题<input name="title" required /></label><label>作者<input name="authors" /></label><label>期刊 / 会议<input name="venue" /></label>
+              <button class="button primary" type="submit">保存论文</button>
+            </form>
+            <div class="record-list" id="publicationListAdmin"></div>
+          </details>
+
+          <details class="module-editor">
+            <summary>项目经历 <button type="button" class="text-button" data-reset="projectForm">新建</button></summary>
+            <form class="editor-form compact" id="projectForm">
+              <input type="hidden" name="id" />
+              <div class="field-grid two"><label>时间<input name="time_label" placeholder="2025—至今" /></label><label>可见范围<select name="visibility"><option value="public">公开</option><option value="members">成员可见</option><option value="private">仅所有者</option></select></label></div>
+              <label>项目名称<input name="title" required /></label><label>项目说明<textarea name="description" rows="3"></textarea></label><label>角色 / 类型（逗号分隔）<input name="meta" /></label>
+              <button class="button primary" type="submit">保存项目</button>
+            </form>
+            <div class="record-list" id="projectListAdmin"></div>
+          </details>
+        </section>
+
+        <section class="panel" data-panel-id="posts">
+          <div class="panel-heading"><div><span>04</span><h2>笔记博客</h2></div><button class="button secondary" id="newPost" type="button">新建文章</button></div>
+          <div class="split-layout">
+            <div class="record-list post-list" id="postList"></div>
+            <form class="editor-form post-editor" id="postForm">
+              <input type="hidden" name="id" />
+              <label>标题<input name="title" required /></label>
+              <div class="field-grid two"><label>文章地址<input name="slug" placeholder="research-note-01" required /></label><label>标签（逗号分隔）<input name="tags" /></label></div>
+              <label>摘要<textarea name="excerpt" rows="3"></textarea></label>
+              <label>正文（Markdown）<textarea name="body" rows="14"></textarea></label>
+              <div class="field-grid two"><label>可见范围<select name="visibility"><option value="public">公开</option><option value="unlisted">不公开链接</option><option value="members">成员可见</option><option value="private">仅所有者</option></select></label><label>发布状态<select name="status"><option value="draft">草稿</option><option value="published">已发布</option></select></label></div>
+              <div class="form-actions"><button class="button primary" type="submit">保存文章</button><button class="button danger" id="deletePost" type="button" hidden>删除</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel" data-panel-id="team">
+          <div class="panel-heading"><div><span>05</span><h2>成员权限</h2></div><p>邀请同事、学生或合作者。</p></div>
+          <form class="invite-form" id="inviteForm">
+            <label>GitHub 账号邮箱<input name="email" type="email" required placeholder="name@example.com" /></label>
+            <label>权限<select name="role"><option value="editor">编辑者</option><option value="viewer">只读访客</option></select></label>
+            <button class="button primary" type="submit">保存邀请</button>
+          </form>
+          <div class="member-table" id="memberList"></div>
+        </section>
+      </section>
+    </div>
+
+    <script src="./config.js"></script>
+    <script type="module" src="./admin.js"></script>
+  </body>
+</html>

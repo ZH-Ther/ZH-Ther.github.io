@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#102a43" />
     <meta name="description" content="个人科研主页，汇集研究方向、论文成果、科研项目与学术笔记。" />
-    <title>林知远 · 个人科研主页</title>
+    <title>ZH-Ther · 个人科研主页</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet" />
@@ -15,7 +15,7 @@
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
     <header class="mobile-header">
-      <a class="mobile-brand" href="#about" aria-label="返回首页"><span>LZ</span><strong>林知远</strong></a>
+      <a class="mobile-brand" href="#about" aria-label="返回首页"><span>ZT</span><strong>ZH-Ther</strong></a>
       <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="sidebar">菜单</button>
     </header>
 
@@ -23,15 +23,15 @@
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-inner">
           <a class="identity" href="#about" aria-label="返回个人简介">
-            <div class="portrait" aria-hidden="true"><span>LZ</span><i></i></div>
+            <div class="portrait" aria-hidden="true"><span>ZT</span><i></i></div>
             <div>
-              <strong data-profile="name">林知远</strong>
-              <small data-profile="nameEn">Zhiyuan Lin</small>
+              <strong data-profile="name">ZH-Ther</strong>
+              <small data-profile="nameEn">Research Portfolio</small>
             </div>
           </a>
 
-          <p class="role" data-profile="role">博士研究生 · 人工智能与科学计算</p>
-          <p class="affiliation" data-profile="affiliation">未来智能实验室<br />某某大学计算机学院</p>
+          <p class="role" data-profile="role">科研工作者</p>
+          <p class="affiliation" data-profile="affiliation">个人科研主页</p>
 
           <nav class="nav" aria-label="主要导航">
             <a href="#about" class="active"><span>01</span>个人简介</a>
@@ -47,6 +47,8 @@
             <a href="https://orcid.org" target="_blank" rel="noreferrer">ORCID</a>
           </div>
 
+          <a class="admin-link" id="adminLink" href="./admin.html">GitHub 登录 / 管理</a>
+
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深浅色主题">
             <span class="theme-icon" aria-hidden="true">◐</span><span>切换主题</span>
           </button>
@@ -58,7 +60,7 @@
           <div class="eyebrow"><span></span>Academic portfolio · 2026</div>
           <h1>探索智能系统中<br /><em>可解释、可靠且高效</em>的计算方法。</h1>
           <div class="intro-grid">
-            <p class="lead" data-profile="bio">你好，我是林知远。目前主要研究机器学习与科学计算的交叉问题，关注如何让智能模型在真实世界中更可靠、更透明，并真正服务于科学发现。</p>
+            <p class="lead" data-profile="bio">你好，我是 ZH-Ther。这里用于整理个人研究方向、科研成果、项目经历与学习笔记；正式资料可在管理后台中持续更新。</p>
             <div class="status-card">
               <span class="status-dot"></span>
               <div><small>当前状态</small><strong>开放学术交流与合作</strong></div>
@@ -119,7 +121,7 @@
         </section>
 
         <footer>
-          <div><strong>林知远</strong><span>保持好奇，持续记录。</span></div>
+          <div><strong>ZH-Ther</strong><span>保持好奇，持续记录。</span></div>
           <p>© <span id="year"></span> · Built for research &amp; ideas</p>
         </footer>
       </main>
@@ -130,6 +132,8 @@
       <article id="dialogContent"></article>
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./config.js"></script>
     <script src="./app.js"></script>
+    <script type="module" src="./public-data.js"></script>
   </body>
 </html>
