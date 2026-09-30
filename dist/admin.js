@@ -91,14 +91,6 @@ function initNavigation() {
   if (state.membership.role !== "owner") $$(".owner-only").forEach((item) => item.hidden = true);
 }
 
-function renderOverview() {
-  const published = state.posts.filter((item) => item.status === "published").length;
-  const privateCount = [...state.research, ...state.publications, ...state.projects, ...state.posts].filter((item) => item.visibility !== "public").length;
-  $("#statGrid").innerHTML = [
-    [state.publications.length, "论文成果"], [state.projects.length, "科研项目"], [published, "已发布文章"], [privateCount, "受保护内容"]
-  ].map(([count, label]) => `<div class="stat-card"><strong>${String(count).padStart(2, "0")}</strong><span>${label}</span></div>`).join("");
-}
-
 function renderRecords(target, records, type) {
   $(target).innerHTML = records.length ? records.map((item) => `
     <div class="record-card">
@@ -161,7 +153,7 @@ async function loadData() {
   renderRecords("#researchList", state.research, "research");
   renderRecords("#publicationListAdmin", state.publications, "publication");
   renderRecords("#projectListAdmin", state.projects, "project");
-  renderPosts(); renderOverview();
+  renderPosts();
   await loadMembers();
 }
 

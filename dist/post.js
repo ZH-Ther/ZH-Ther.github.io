@@ -1,4 +1,4 @@
-import { isConfigured, supabase } from "./data-service.js";
+import { isPublicConfigured, selectRows } from "./public-client.js";
 
 const root = document.querySelector("#article");
 const slug = new URLSearchParams(location.search).get("slug");
@@ -41,11 +41,15 @@ function renderMarkdown(source = "") {
   return body;
 }
 
-if (!isConfigured || !slug) {
+if (!isPublicConfigured || !slug) {
   root.innerHTML = '<div class="article-state">文章地址无效或内容服务尚未启用。</div>';
 } else {
-  const { data, error } = await supabase.from("posts").select("title,excerpt,body,tags,visibility,published_at,reading_minutes").eq("slug", slug).eq("status", "published").maybeSingle();
-  if (error || !data) {
+  let data = null;
+  try {
+    const rows = await selectRows("posts", `select=title,excerpt,body,tags,visibility,published_at,reading_minutes&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`);
+    data = rows[0] || null;
+  } catch {}
+  if (!data) {
     root.innerHTML = '<div class="article-state"><h2>无法查看这篇文章</h2><p>文章不存在，或当前 GitHub 账号没有阅读权限。</p></div>';
   } else {
     await waitForRenderLibraries();

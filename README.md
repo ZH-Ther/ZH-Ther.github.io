@@ -29,4 +29,6 @@ The owner account is assigned automatically when the GitHub username is `ZH-Ther
 
 ## Local preview
 
-Serve the `dist` directory with any static file server. Without Supabase configuration, the public site uses built-in example content and the admin page displays setup guidance.
+Serve the `dist` directory with any static file server. Without Supabase configuration, the public site uses safe empty states and the admin page displays setup guidance.
+
+See `开发与使用手册.md` for the complete Chinese operations, data, privacy, development, and troubleshooting guide.
