@@ -2,7 +2,17 @@ import { isConfigured, supabase, getCurrentMembership, signInWithGitHub, signOut
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const state = { membership: null, user: null, research: [], publications: [], projects: [], posts: [], members: [] };
+const moduleIds = ["about", "research", "publications", "projects", "notes"];
+const defaultSettings = {
+  id: "main", site_title: "ZH-Ther · 个人科研主页", site_description: "个人科研主页，汇集研究方向、论文成果、科研项目与学术笔记。",
+  hero_kicker: "Academic portfolio · 2026", hero_prefix: "探索智能系统中", hero_emphasis: "可解释、可靠且高效", hero_suffix: "的计算方法。",
+  status_text: "开放学术交流与合作", scholar_url: "https://scholar.google.com", github_url: "https://github.com/ZH-Ther", orcid_url: "https://orcid.org", avatar_url: "",
+  footer_motto: "保持好奇，持续记录。", research_description: "围绕“可信智能”这条主线，从方法、系统到科学应用展开研究。",
+  publications_description: "代表性论文与正在推进的工作。姓名下划线表示本人。", projects_description: "把研究问题落实为数据、模型与可复现的工具。",
+  notes_description: "记录论文阅读、研究方法与工程实践。", metric_1_value: "08", metric_1_label: "论文 / 预印本", metric_2_value: "04", metric_2_label: "研究项目",
+  metric_3_value: "03", metric_3_label: "开源工具", metric_4_value: "12", metric_4_label: "学术笔记", module_order: moduleIds, hidden_modules: []
+};
+const state = { membership: null, user: null, settings: { ...defaultSettings }, research: [], publications: [], projects: [], posts: [], members: [] };
 const visibilityText = { public: "公开", unlisted: "不公开链接", members: "成员可见", private: "仅所有者" };
 const roleText = { owner: "所有者", editor: "编辑者", viewer: "只读访客" };
 
@@ -33,6 +43,33 @@ function fillForm(form, record = {}) {
     field.value = Array.isArray(value) ? value.join(", ") : (value ?? "");
   });
   form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function renderAvatarPreview(url = "") {
+  const preview = $("#avatarPreview");
+  preview.replaceChildren();
+  if (url) {
+    const image = document.createElement("img");
+    image.src = url;
+    image.alt = "当前头像";
+    preview.appendChild(image);
+  } else {
+    const fallback = document.createElement("span");
+    fallback.textContent = "ZT";
+    preview.appendChild(fallback);
+  }
+}
+
+function fillSettingsForm(settings) {
+  const form = $("#settingsForm");
+  fillForm(form, settings);
+  const order = Array.isArray(settings.module_order) && settings.module_order.length ? settings.module_order : moduleIds;
+  const hidden = new Set(settings.hidden_modules || []);
+  moduleIds.forEach((id) => {
+    form.elements[`module_${id}_enabled`].checked = !hidden.has(id);
+    form.elements[`module_${id}_order`].value = Math.max(1, order.indexOf(id) + 1 || moduleIds.indexOf(id) + 1);
+  });
+  renderAvatarPreview(settings.avatar_url);
 }
 
 async function save(table, payload, id) {
@@ -105,19 +142,22 @@ async function loadMembers() {
 }
 
 async function loadData() {
-  const [profile, research, publications, projects, posts] = await Promise.all([
+  const [profile, research, publications, projects, posts, settings] = await Promise.all([
     supabase.from("site_profile").select("*").eq("id", "main").maybeSingle(),
     supabase.from("research_items").select("*").order("order_index"),
     supabase.from("publications").select("*").order("year", { ascending: false }),
     supabase.from("projects").select("*").order("order_index"),
-    supabase.from("posts").select("*").order("updated_at", { ascending: false })
+    supabase.from("posts").select("*").order("updated_at", { ascending: false }),
+    supabase.from("site_settings").select("*").eq("id", "main").maybeSingle()
   ]);
   [profile, research, publications, projects, posts].forEach((result) => { if (result.error) throw result.error; });
   state.research = research.data || [];
   state.publications = publications.data || [];
   state.projects = projects.data || [];
   state.posts = posts.data || [];
+  state.settings = { ...defaultSettings, ...(settings.data || {}) };
   if (profile.data) fillForm($("#profileForm"), profile.data);
+  fillSettingsForm(state.settings);
   renderRecords("#researchList", state.research, "research");
   renderRecords("#publicationListAdmin", state.publications, "publication");
   renderRecords("#projectListAdmin", state.projects, "project");
@@ -126,6 +166,20 @@ async function loadData() {
 }
 
 function bindForms() {
+  $("#settingsForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = values(event.currentTarget);
+    const moduleOrder = moduleIds.slice().sort((a, b) => Number(data[`module_${a}_order`] || 99) - Number(data[`module_${b}_order`] || 99));
+    const hiddenModules = moduleIds.filter((id) => !event.currentTarget.elements[`module_${id}_enabled`].checked);
+    const keys = ["site_title", "site_description", "hero_kicker", "hero_prefix", "hero_emphasis", "hero_suffix", "status_text", "scholar_url", "github_url", "orcid_url", "avatar_url", "footer_motto", "research_description", "publications_description", "projects_description", "notes_description", "metric_1_value", "metric_1_label", "metric_2_value", "metric_2_label", "metric_3_value", "metric_3_label", "metric_4_value", "metric_4_label"];
+    const payload = Object.fromEntries(keys.map((key) => [key, data[key] || ""]));
+    Object.assign(payload, { id: "main", module_order: moduleOrder, hidden_modules: hiddenModules, updated_at: new Date().toISOString() });
+    const { error } = await supabase.from("site_settings").upsert(payload);
+    if (error) return notify(error.message, true);
+    state.settings = { ...state.settings, ...payload };
+    notify("网站设置已保存，刷新主页即可查看");
+  });
+
   $("#profileForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const payload = { id: "main", ...values(event.currentTarget), updated_at: new Date().toISOString() };
@@ -192,6 +246,27 @@ function bindRecordActions() {
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) return notify(error.message, true);
     $("#postForm").reset(); $("#deletePost").hidden = true; await loadData(); notify("文章已删除");
+  });
+
+  $("#avatarFile").addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) return notify("请选择小于 5 MB 的 JPG、PNG、WebP 或 GIF 图片", true);
+    const extension = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const path = `avatars/profile-${state.user.id}.${extension}`;
+    notify("正在上传头像…");
+    const { error } = await supabase.storage.from("site-assets").upload(path, file, { upsert: true, cacheControl: "3600", contentType: file.type });
+    if (error) return notify(error.message, true);
+    const { data } = supabase.storage.from("site-assets").getPublicUrl(path);
+    const publicUrl = `${data.publicUrl}?v=${Date.now()}`;
+    $("#settingsForm [name=avatar_url]").value = publicUrl;
+    renderAvatarPreview(publicUrl);
+    notify("头像已上传，请保存网站设置");
+  });
+  $("#removeAvatar").addEventListener("click", () => {
+    $("#settingsForm [name=avatar_url]").value = "";
+    $("#avatarFile").value = "";
+    renderAvatarPreview();
   });
 }
 

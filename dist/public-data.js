@@ -8,16 +8,18 @@ if (!isConfigured) {
   const { user, membership } = await getCurrentMembership();
   if (loginLink) loginLink.textContent = membership ? `管理后台 · ${membership.role}` : (user ? "等待授权" : "GitHub 登录");
 
-  const [profileResult, researchResult, publicationResult, projectResult, postResult] = await Promise.all([
+  const [profileResult, researchResult, publicationResult, projectResult, postResult, settingsResult] = await Promise.all([
     supabase.from("site_profile").select("*").eq("id", "main").maybeSingle(),
     supabase.from("research_items").select("*").order("order_index"),
     supabase.from("publications").select("*").order("year", { ascending: false }).order("order_index"),
     supabase.from("projects").select("*").order("order_index"),
-    supabase.from("posts").select("id,slug,title,excerpt,body,tags,visibility,published_at,reading_minutes").eq("status", "published").neq("visibility", "unlisted").order("published_at", { ascending: false })
+    supabase.from("posts").select("id,slug,title,excerpt,body,tags,visibility,published_at,reading_minutes").eq("status", "published").neq("visibility", "unlisted").order("published_at", { ascending: false }),
+    supabase.from("site_settings").select("*").eq("id", "main").maybeSingle()
   ]);
 
   const data = window.SITE_DATA;
   const render = window.siteRender;
+  if (settingsResult.data) render.settings(settingsResult.data);
   if (profileResult.data) {
     Object.assign(data.profile, {
       name: profileResult.data.name,

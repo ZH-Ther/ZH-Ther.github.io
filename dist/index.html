@@ -23,7 +23,7 @@
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-inner">
           <a class="identity" href="#about" aria-label="返回个人简介">
-            <div class="portrait" aria-hidden="true"><span>ZT</span><i></i></div>
+            <div class="portrait" id="profilePortrait" aria-hidden="true"><span>ZT</span><i></i></div>
             <div>
               <strong data-profile="name">ZH-Ther</strong>
               <small data-profile="nameEn">Research Portfolio</small>
@@ -34,17 +34,17 @@
           <p class="affiliation" data-profile="affiliation">个人科研主页</p>
 
           <nav class="nav" aria-label="主要导航">
-            <a href="#about" class="active"><span>01</span>个人简介</a>
-            <a href="#research"><span>02</span>研究方向</a>
-            <a href="#publications"><span>03</span>科研成果</a>
-            <a href="#projects"><span>04</span>项目经历</a>
-            <a href="#notes"><span>05</span>笔记博客</a>
+            <a href="#about" class="active" data-nav-id="about"><span>01</span>个人简介</a>
+            <a href="#research" data-nav-id="research"><span>02</span>研究方向</a>
+            <a href="#publications" data-nav-id="publications"><span>03</span>科研成果</a>
+            <a href="#projects" data-nav-id="projects"><span>04</span>项目经历</a>
+            <a href="#notes" data-nav-id="notes"><span>05</span>笔记博客</a>
           </nav>
 
           <div class="socials" aria-label="学术主页链接">
-            <a href="https://scholar.google.com" target="_blank" rel="noreferrer">Scholar</a>
-            <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="https://orcid.org" target="_blank" rel="noreferrer">ORCID</a>
+            <a href="https://scholar.google.com" data-social="scholar_url" target="_blank" rel="noreferrer">Scholar</a>
+            <a href="https://github.com" data-social="github_url" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://orcid.org" data-social="orcid_url" target="_blank" rel="noreferrer">ORCID</a>
           </div>
 
           <a class="admin-link" id="adminLink" href="./admin.html">GitHub 登录 / 管理</a>
@@ -56,14 +56,14 @@
       </aside>
 
       <main id="main">
-        <section class="intro-section section" id="about">
-          <div class="eyebrow"><span></span>Academic portfolio · 2026</div>
-          <h1>探索智能系统中<br /><em>可解释、可靠且高效</em>的计算方法。</h1>
+        <section class="intro-section section" id="about" data-module-id="about">
+          <div class="eyebrow"><span></span><b id="heroKicker">Academic portfolio · 2026</b></div>
+          <h1><span id="heroPrefix">探索智能系统中</span><br /><em id="heroEmphasis">可解释、可靠且高效</em><span id="heroSuffix">的计算方法。</span></h1>
           <div class="intro-grid">
             <p class="lead" data-profile="bio">你好，我是 ZH-Ther。这里用于整理个人研究方向、科研成果、项目经历与学习笔记；正式资料可在管理后台中持续更新。</p>
             <div class="status-card">
               <span class="status-dot"></span>
-              <div><small>当前状态</small><strong>开放学术交流与合作</strong></div>
+              <div><small>当前状态</small><strong id="statusText">开放学术交流与合作</strong></div>
             </div>
           </div>
           <div class="cta-row">
@@ -71,42 +71,42 @@
             <button class="button secondary" id="copyEmail" type="button" data-email="hello@example.edu">复制邮箱</button>
           </div>
           <div class="metrics" aria-label="学术数据概览">
-            <div><strong>08</strong><span>论文 / 预印本</span></div>
-            <div><strong>04</strong><span>研究项目</span></div>
-            <div><strong>03</strong><span>开源工具</span></div>
-            <div><strong>12</strong><span>学术笔记</span></div>
+            <div><strong data-metric-value="1">08</strong><span data-metric-label="1">论文 / 预印本</span></div>
+            <div><strong data-metric-value="2">04</strong><span data-metric-label="2">研究项目</span></div>
+            <div><strong data-metric-value="3">03</strong><span data-metric-label="3">开源工具</span></div>
+            <div><strong data-metric-value="4">12</strong><span data-metric-label="4">学术笔记</span></div>
           </div>
         </section>
 
-        <section class="section" id="research">
+        <section class="section" id="research" data-module-id="research">
           <div class="section-heading">
             <div><span class="section-index">02</span><h2>研究方向</h2></div>
-            <p>围绕“可信智能”这条主线，从方法、系统到科学应用展开研究。</p>
+            <p id="researchDescription">围绕“可信智能”这条主线，从方法、系统到科学应用展开研究。</p>
           </div>
           <div class="research-grid" id="researchGrid"></div>
         </section>
 
-        <section class="section" id="publications">
+        <section class="section" id="publications" data-module-id="publications">
           <div class="section-heading">
             <div><span class="section-index">03</span><h2>科研成果</h2></div>
-            <p>代表性论文与正在推进的工作。姓名下划线表示本人。</p>
+            <p id="publicationsDescription">代表性论文与正在推进的工作。姓名下划线表示本人。</p>
           </div>
           <div class="filter-row" id="publicationFilters" aria-label="论文筛选"></div>
           <div class="publication-list" id="publicationList" aria-live="polite"></div>
         </section>
 
-        <section class="section" id="projects">
+        <section class="section" id="projects" data-module-id="projects">
           <div class="section-heading">
             <div><span class="section-index">04</span><h2>项目经历</h2></div>
-            <p>把研究问题落实为数据、模型与可复现的工具。</p>
+            <p id="projectsDescription">把研究问题落实为数据、模型与可复现的工具。</p>
           </div>
           <div class="project-timeline" id="projectList"></div>
         </section>
 
-        <section class="section notes-section" id="notes">
+        <section class="section notes-section" id="notes" data-module-id="notes">
           <div class="section-heading">
             <div><span class="section-index">05</span><h2>笔记博客</h2></div>
-            <p>记录论文阅读、研究方法与工程实践。</p>
+            <p id="notesDescription">记录论文阅读、研究方法与工程实践。</p>
           </div>
           <div class="note-toolbar">
             <label class="search-box">
@@ -121,7 +121,7 @@
         </section>
 
         <footer>
-          <div><strong>ZH-Ther</strong><span>保持好奇，持续记录。</span></div>
+          <div><strong>ZH-Ther</strong><span id="footerMotto">保持好奇，持续记录。</span></div>
           <p>© <span id="year"></span> · Built for research &amp; ideas</p>
         </footer>
       </main>

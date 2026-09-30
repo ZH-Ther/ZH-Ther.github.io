@@ -52,6 +52,7 @@
         </div>
         <nav aria-label="管理后台导航">
           <button class="nav-button active" data-panel="overview" type="button">概览</button>
+          <button class="nav-button" data-panel="settings" type="button">网站设置</button>
           <button class="nav-button" data-panel="profile" type="button">个人资料</button>
           <button class="nav-button" data-panel="modules" type="button">科研模块</button>
           <button class="nav-button" data-panel="posts" type="button">笔记博客</button>
@@ -69,8 +70,61 @@
           <div class="info-card"><h3>内容隐私规则</h3><p>“公开”内容对所有访客可见；“成员可见”要求受邀账号登录；“私密”仅所有者可读取；草稿只在后台出现。</p></div>
         </section>
 
+        <section class="panel" data-panel-id="settings">
+          <div class="panel-heading"><div><span>02</span><h2>网站设置</h2></div><p>调整主页文案、头像、链接、统计数字和模块顺序。</p></div>
+          <form class="editor-form settings-form" id="settingsForm">
+            <h3 class="form-section-title">网站信息</h3>
+            <label>浏览器标题<input name="site_title" required /></label>
+            <label>网站简介<textarea name="site_description" rows="2"></textarea></label>
+
+            <h3 class="form-section-title">头像</h3>
+            <div class="avatar-editor">
+              <div class="avatar-preview" id="avatarPreview"><span>ZT</span></div>
+              <div>
+                <label>上传头像<input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /></label>
+                <input name="avatar_url" type="hidden" />
+                <p class="field-help">支持 JPG、PNG、WebP 或 GIF，最大 5 MB。上传后仍需点击页面底部“保存网站设置”。</p>
+                <button class="mini-button" id="removeAvatar" type="button">恢复文字头像</button>
+              </div>
+            </div>
+
+            <h3 class="form-section-title">主页标题与状态</h3>
+            <label>标题上方文字<input name="hero_kicker" /></label>
+            <div class="field-grid three"><label>标题前半句<input name="hero_prefix" /></label><label>强调文字<input name="hero_emphasis" /></label><label>标题后半句<input name="hero_suffix" /></label></div>
+            <label>当前状态<input name="status_text" /></label>
+
+            <h3 class="form-section-title">学术链接</h3>
+            <div class="field-grid three"><label>Google Scholar<input name="scholar_url" type="url" placeholder="https://scholar.google.com/..." /></label><label>GitHub<input name="github_url" type="url" placeholder="https://github.com/..." /></label><label>ORCID<input name="orcid_url" type="url" placeholder="https://orcid.org/..." /></label></div>
+
+            <h3 class="form-section-title">主页统计</h3>
+            <div class="metric-editor-grid">
+              <label>数字 1<input name="metric_1_value" /></label><label>说明 1<input name="metric_1_label" /></label>
+              <label>数字 2<input name="metric_2_value" /></label><label>说明 2<input name="metric_2_label" /></label>
+              <label>数字 3<input name="metric_3_value" /></label><label>说明 3<input name="metric_3_label" /></label>
+              <label>数字 4<input name="metric_4_value" /></label><label>说明 4<input name="metric_4_label" /></label>
+            </div>
+
+            <h3 class="form-section-title">模块说明、显示与顺序</h3>
+            <p class="field-help">顺序数字越小越靠前。取消“显示”后，该模块和导航入口都会隐藏。</p>
+            <div class="module-settings-list">
+              <div class="module-setting-row"><strong>个人简介</strong><label class="checkbox-label"><input name="module_about_enabled" type="checkbox" />显示</label><label>顺序<input name="module_about_order" type="number" min="1" max="5" /></label></div>
+              <div class="module-setting-row"><strong>研究方向</strong><label class="checkbox-label"><input name="module_research_enabled" type="checkbox" />显示</label><label>顺序<input name="module_research_order" type="number" min="1" max="5" /></label></div>
+              <label>研究方向说明<input name="research_description" /></label>
+              <div class="module-setting-row"><strong>科研成果</strong><label class="checkbox-label"><input name="module_publications_enabled" type="checkbox" />显示</label><label>顺序<input name="module_publications_order" type="number" min="1" max="5" /></label></div>
+              <label>科研成果说明<input name="publications_description" /></label>
+              <div class="module-setting-row"><strong>项目经历</strong><label class="checkbox-label"><input name="module_projects_enabled" type="checkbox" />显示</label><label>顺序<input name="module_projects_order" type="number" min="1" max="5" /></label></div>
+              <label>项目经历说明<input name="projects_description" /></label>
+              <div class="module-setting-row"><strong>笔记博客</strong><label class="checkbox-label"><input name="module_notes_enabled" type="checkbox" />显示</label><label>顺序<input name="module_notes_order" type="number" min="1" max="5" /></label></div>
+              <label>笔记博客说明<input name="notes_description" /></label>
+            </div>
+
+            <label>页脚短句<input name="footer_motto" /></label>
+            <div class="form-actions"><button class="button primary" type="submit">保存网站设置</button></div>
+          </form>
+        </section>
+
         <section class="panel" data-panel-id="profile">
-          <div class="panel-heading"><div><span>02</span><h2>个人资料</h2></div><p>更新后会同步到公开主页。</p></div>
+          <div class="panel-heading"><div><span>03</span><h2>个人资料</h2></div><p>更新后会同步到公开主页。</p></div>
           <form class="editor-form" id="profileForm">
             <div class="field-grid two"><label>中文姓名<input name="name" required /></label><label>英文姓名<input name="name_en" /></label></div>
             <div class="field-grid two"><label>学术身份<input name="role" /></label><label>单位 / 实验室<input name="affiliation" /></label></div>
@@ -81,7 +135,7 @@
         </section>
 
         <section class="panel" data-panel-id="modules">
-          <div class="panel-heading"><div><span>03</span><h2>科研模块</h2></div><p>管理研究方向、论文成果和项目经历。</p></div>
+          <div class="panel-heading"><div><span>04</span><h2>科研模块</h2></div><p>管理研究方向、论文成果和项目经历。</p></div>
           <details class="module-editor" open>
             <summary>研究方向 <button type="button" class="text-button" data-reset="researchForm">新建</button></summary>
             <form class="editor-form compact" id="researchForm">
@@ -118,7 +172,7 @@
         </section>
 
         <section class="panel" data-panel-id="posts">
-          <div class="panel-heading"><div><span>04</span><h2>笔记博客</h2></div><button class="button secondary" id="newPost" type="button">新建文章</button></div>
+          <div class="panel-heading"><div><span>05</span><h2>笔记博客</h2></div><button class="button secondary" id="newPost" type="button">新建文章</button></div>
           <div class="split-layout">
             <div class="record-list post-list" id="postList"></div>
             <form class="editor-form post-editor" id="postForm">
@@ -126,7 +180,8 @@
               <label>标题<input name="title" required /></label>
               <div class="field-grid two"><label>文章地址<input name="slug" placeholder="research-note-01" required /></label><label>标签（逗号分隔）<input name="tags" /></label></div>
               <label>摘要<textarea name="excerpt" rows="3"></textarea></label>
-              <label>正文（Markdown）<textarea name="body" rows="14"></textarea></label>
+              <label>正文（Markdown）<textarea name="body" rows="14" placeholder="# 标题&#10;&#10;正文支持 **粗体**、代码块、图片和数学公式。"></textarea></label>
+              <p class="field-help markdown-help">支持 Markdown、代码块、图片，以及行内公式 <code>$E=mc^2$</code> 和独立公式 <code>$$...$$</code>。</p>
               <div class="field-grid two"><label>可见范围<select name="visibility"><option value="public">公开</option><option value="unlisted">不公开链接</option><option value="members">成员可见</option><option value="private">仅所有者</option></select></label><label>发布状态<select name="status"><option value="draft">草稿</option><option value="published">已发布</option></select></label></div>
               <div class="form-actions"><button class="button primary" type="submit">保存文章</button><button class="button danger" id="deletePost" type="button" hidden>删除</button></div>
             </form>
@@ -134,7 +189,7 @@
         </section>
 
         <section class="panel" data-panel-id="team">
-          <div class="panel-heading"><div><span>05</span><h2>成员权限</h2></div><p>邀请同事、学生或合作者。</p></div>
+          <div class="panel-heading"><div><span>06</span><h2>成员权限</h2></div><p>邀请同事、学生或合作者。</p></div>
           <form class="invite-form" id="inviteForm">
             <label>GitHub 账号邮箱<input name="email" type="email" required placeholder="name@example.com" /></label>
             <label>权限<select name="role"><option value="editor">编辑者</option><option value="viewer">只读访客</option></select></label>

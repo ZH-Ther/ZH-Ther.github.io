@@ -12,6 +12,37 @@ create table if not exists public.site_profile (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.site_settings (
+  id text primary key default 'main',
+  site_title text not null default 'ZH-Ther · 个人科研主页',
+  site_description text not null default '个人科研主页，汇集研究方向、论文成果、科研项目与学术笔记。',
+  hero_kicker text not null default 'Academic portfolio · 2026',
+  hero_prefix text not null default '探索智能系统中',
+  hero_emphasis text not null default '可解释、可靠且高效',
+  hero_suffix text not null default '的计算方法。',
+  status_text text not null default '开放学术交流与合作',
+  scholar_url text,
+  github_url text,
+  orcid_url text,
+  avatar_url text,
+  footer_motto text not null default '保持好奇，持续记录。',
+  research_description text not null default '围绕“可信智能”这条主线，从方法、系统到科学应用展开研究。',
+  publications_description text not null default '代表性论文与正在推进的工作。姓名下划线表示本人。',
+  projects_description text not null default '把研究问题落实为数据、模型与可复现的工具。',
+  notes_description text not null default '记录论文阅读、研究方法与工程实践。',
+  metric_1_value text not null default '08',
+  metric_1_label text not null default '论文 / 预印本',
+  metric_2_value text not null default '04',
+  metric_2_label text not null default '研究项目',
+  metric_3_value text not null default '03',
+  metric_3_label text not null default '开源工具',
+  metric_4_value text not null default '12',
+  metric_4_label text not null default '学术笔记',
+  module_order text[] not null default array['about','research','publications','projects','notes'],
+  hidden_modules text[] not null default '{}',
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.members (
   id uuid primary key default gen_random_uuid(),
   user_id uuid unique references auth.users(id) on delete set null,
@@ -107,6 +138,7 @@ create trigger on_auth_user_created_claim_membership after insert on auth.users
 for each row execute function public.claim_github_membership();
 
 alter table public.site_profile enable row level security;
+alter table public.site_settings enable row level security;
 alter table public.members enable row level security;
 alter table public.research_items enable row level security;
 alter table public.publications enable row level security;
@@ -117,6 +149,12 @@ drop policy if exists "profile is public" on public.site_profile;
 create policy "profile is public" on public.site_profile for select using (true);
 drop policy if exists "editors manage profile" on public.site_profile;
 create policy "editors manage profile" on public.site_profile for all to authenticated
+using (public.current_member_role() in ('owner','editor')) with check (public.current_member_role() in ('owner','editor'));
+
+drop policy if exists "settings are public" on public.site_settings;
+create policy "settings are public" on public.site_settings for select using (true);
+drop policy if exists "editors manage settings" on public.site_settings;
+create policy "editors manage settings" on public.site_settings for all to authenticated
 using (public.current_member_role() in ('owner','editor')) with check (public.current_member_role() in ('owner','editor'));
 
 drop policy if exists "members read own membership" on public.members;
@@ -168,3 +206,26 @@ using (public.current_member_role() = 'owner' or (public.current_member_role() =
 insert into public.site_profile(id, name, name_en, role, affiliation, email, bio)
 values('main', 'ZH-Ther', 'ZH-Ther', '科研工作者', '请在管理后台填写单位与实验室', '', '请在管理后台填写个人简介。')
 on conflict (id) do nothing;
+
+insert into public.site_settings(id, scholar_url, github_url, orcid_url)
+values('main', 'https://scholar.google.com', 'https://github.com/ZH-Ther', 'https://orcid.org')
+on conflict (id) do nothing;
+
+-- Public avatar storage. Upload and deletion still require an owner/editor session.
+insert into storage.buckets(id, name, public, file_size_limit, allowed_mime_types)
+values('site-assets', 'site-assets', true, 5242880, array['image/jpeg','image/png','image/webp','image/gif'])
+on conflict (id) do update set public = excluded.public, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "public reads site assets" on storage.objects;
+create policy "public reads site assets" on storage.objects for select
+using (bucket_id = 'site-assets');
+drop policy if exists "editors upload site assets" on storage.objects;
+create policy "editors upload site assets" on storage.objects for insert to authenticated
+with check (bucket_id = 'site-assets' and public.current_member_role() in ('owner','editor'));
+drop policy if exists "editors update site assets" on storage.objects;
+create policy "editors update site assets" on storage.objects for update to authenticated
+using (bucket_id = 'site-assets' and public.current_member_role() in ('owner','editor'))
+with check (bucket_id = 'site-assets' and public.current_member_role() in ('owner','editor'));
+drop policy if exists "editors delete site assets" on storage.objects;
+create policy "editors delete site assets" on storage.objects for delete to authenticated
+using (bucket_id = 'site-assets' and public.current_member_role() in ('owner','editor'));

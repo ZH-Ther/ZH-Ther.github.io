@@ -9,6 +9,9 @@ Personal research website for `https://zh-ther.github.io`, with a public academi
 - Owner, editor, and viewer roles
 - Public, unlisted, member-only, private, and draft content states
 - Browser-based profile, module, blog, and member management
+- Visual site settings for hero copy, academic links, metrics, module visibility/order, and footer text
+- Supabase Storage avatar uploads (JPG, PNG, WebP, or GIF up to 5 MB)
+- Sanitized Markdown articles with code highlighting and KaTeX formulas
 - GitHub Actions deployment to GitHub Pages
 - Supabase Row Level Security policies
 
@@ -19,6 +22,8 @@ Personal research website for `https://zh-ther.github.io`, with a public academi
 3. Configure the OAuth callback URL in a GitHub OAuth App.
 4. Add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` as GitHub Actions repository variables.
 5. Enable GitHub Pages with GitHub Actions as its source.
+
+If the database was initialized with an earlier version, run the latest `supabase/schema.sql` again. It is idempotent and adds the `site_settings` table plus the public `site-assets` avatar bucket without deleting existing content.
 
 The owner account is assigned automatically when the GitHub username is `ZH-Ther`.
 

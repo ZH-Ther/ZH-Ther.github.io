@@ -46,6 +46,79 @@ function renderProfile() {
   $('#copyEmail').dataset.email = SITE_DATA.profile.email;
 }
 
+function applySiteSettings(settings = {}) {
+  const setText = (selector, value) => { const element = $(selector); if (element && value !== null && value !== undefined) element.textContent = value; };
+  if (settings.site_title) document.title = settings.site_title;
+  const description = document.querySelector('meta[name="description"]');
+  if (description && settings.site_description) description.content = settings.site_description;
+  setText('#heroKicker', settings.hero_kicker);
+  setText('#heroPrefix', settings.hero_prefix);
+  setText('#heroEmphasis', settings.hero_emphasis);
+  setText('#heroSuffix', settings.hero_suffix);
+  setText('#statusText', settings.status_text);
+  setText('#researchDescription', settings.research_description);
+  setText('#publicationsDescription', settings.publications_description);
+  setText('#projectsDescription', settings.projects_description);
+  setText('#notesDescription', settings.notes_description);
+  setText('#footerMotto', settings.footer_motto);
+
+  for (let index = 1; index <= 4; index += 1) {
+    setText(`[data-metric-value="${index}"]`, settings[`metric_${index}_value`]);
+    setText(`[data-metric-label="${index}"]`, settings[`metric_${index}_label`]);
+  }
+
+  $$('[data-social]').forEach((link) => {
+    const value = settings[link.dataset.social];
+    let validUrl = '';
+    try { const parsed = new URL(value); if (['http:', 'https:'].includes(parsed.protocol)) validUrl = parsed.href; } catch {}
+    link.hidden = !validUrl;
+    if (validUrl) link.href = validUrl;
+  });
+
+  const portrait = $('#profilePortrait');
+  if (portrait && settings.avatar_url) {
+    const image = document.createElement('img');
+    image.src = settings.avatar_url;
+    image.alt = '';
+    image.addEventListener('error', () => { portrait.innerHTML = '<span>ZT</span><i></i>'; }, { once: true });
+    portrait.replaceChildren(image);
+  }
+
+  const ids = ['about', 'research', 'publications', 'projects', 'notes'];
+  const preferred = Array.isArray(settings.module_order) ? settings.module_order.filter((id) => ids.includes(id)) : [];
+  const order = [...new Set([...preferred, ...ids])];
+  const hidden = new Set(settings.hidden_modules || []);
+  const main = $('#main');
+  const footer = $('main > footer');
+  const nav = $('.nav');
+  order.forEach((id) => {
+    const section = $(`[data-module-id="${id}"]`);
+    const link = $(`[data-nav-id="${id}"]`);
+    if (section) { section.hidden = hidden.has(id); main.insertBefore(section, footer); }
+    if (link) { link.hidden = hidden.has(id); nav.appendChild(link); }
+  });
+  const visibleIds = order.filter((id) => !hidden.has(id));
+  visibleIds.forEach((id, index) => {
+    const link = $(`[data-nav-id="${id}"]`);
+    const sectionIndex = $(`[data-module-id="${id}"] .section-index`);
+    if (link) {
+      link.classList.toggle('active', index === 0);
+      const number = link.querySelector('span');
+      if (number) number.textContent = String(index + 1).padStart(2, '0');
+    }
+    if (sectionIndex) sectionIndex.textContent = String(index + 1).padStart(2, '0');
+  });
+  const firstVisible = visibleIds[0];
+  if (firstVisible) {
+    $('.identity')?.setAttribute('href', `#${firstVisible}`);
+    $('.mobile-brand')?.setAttribute('href', `#${firstVisible}`);
+  }
+  const resultTarget = visibleIds.includes('publications') ? 'publications' : visibleIds.find((id) => id !== 'about');
+  const resultLink = $('.cta-row .primary');
+  if (resultLink) resultLink.hidden = !resultTarget;
+  if (resultLink && resultTarget) resultLink.href = `#${resultTarget}`;
+}
+
 function renderResearch() {
   $('#researchGrid').innerHTML = SITE_DATA.research.map((item, index) => `
     <article class="research-card">
@@ -111,6 +184,10 @@ function renderNotes() {
 function openNote(id) {
   const note = SITE_DATA.notes.find((item) => String(item.id) === String(id));
   if (!note) return;
+  if (note.slug) {
+    window.location.href = `./post.html?slug=${encodeURIComponent(note.slug)}`;
+    return;
+  }
   $('#dialogContent').innerHTML = `
     <div class="dialog-meta">${note.date} · ${note.tag} · ${note.minutes}</div>
     <h2>${note.title}</h2>
@@ -186,6 +263,7 @@ $('#year').textContent = new Date().getFullYear();
 window.SITE_DATA = SITE_DATA;
 window.siteRender = {
   profile: renderProfile,
+  settings: applySiteSettings,
   research: renderResearch,
   publications: renderPublications,
   projects: renderProjects,
